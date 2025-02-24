@@ -1,0 +1,201 @@
+.profile-container {
+	padding: 20px;
+	color: #000;
+}
+
+.profile-header {
+	margin-bottom: 40px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 5px 20px 5px;
+	border-bottom: 1px solid #eee;
+	border-radius: 10px;
+	box-shadow: #8e8e93 1px 1px 10px;
+}
+
+.name-container {
+	position: relative;
+	width: 100%;
+}
+
+.name-row {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.profile-header h2 {
+	margin: 0;
+	text-align: left;
+	font-size: 24px;
+}
+
+.profile-avatar img {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	margin-bottom: 10px;
+}
+
+.menu-item {
+	margin-bottom: 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px;
+	border-bottom: 1px solid #eee;
+	border-radius: 10px;
+	box-shadow: #8e8e93 1px 1px 10px;
+	color: #000;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+	background-color: #f5f5f5;
+}
+
+.menu-item-left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.menu-item img {
+	width: 24px;
+	height: 24px;
+}
+
+.arrow {
+	color: #8e8e93;
+	font-size: 24px;
+	font-weight: 700;
+}
+
+.progress-container {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.progress-bar {
+	width: 100px;
+	height: 6px;
+	background: #e5e5ea;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.progress-fill {
+	height: 100%;
+	background: #007aff;
+	transition: width 0.3s ease;
+}
+
+.progress-count {
+	color: #8e8e93;
+	font-size: 14px;
+
+	margin-left: auto;
+}
+
+.menu-item:last-child .arrow {
+	display: none;
+}
+
+.company-signature {
+	color: #888;
+	font-size: 12px;
+	margin-top: 2px;
+	margin-bottom: 5px;
+	text-align: left;
+	display: block;
+	width: 100%;
+}
+
+.dropdown-container {
+	display: inline-flex;
+	margin-left: 10px;
+	align-items: center;
+	position: relative;
+}
+
+.dropdown-button {
+	background: none;
+	border: none;
+	color: #8e8e93;
+	font-size: 12px;
+	cursor: pointer;
+	padding: 6px;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	outline: none;
+	transition: transform 0.2s ease-out;
+	border-radius: 50%;
+	background-color: #f2f2f7;
+	width: 24px;
+	height: 24px;
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+}
+
+.dropdown-button.active {
+	color: #007aff;
+	transform: rotate(-90deg);
+	background-color: #e5e5ea;
+}
+
+.dropdown-button:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.dropdown-button:active {
+	background-color: #e5e5ea;
+}
+
+.logout-button {
+	position: absolute;
+	top: -6px;
+	left: 30px;
+	background: #ff3b30;
+	border: none;
+	border-radius: 8px;
+	color: white;
+	font-size: 14px;
+	cursor: pointer;
+	padding: 8px 16px;
+	z-index: 100;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.logout-button.entering {
+	animation: slideDown 0.2s ease-out forwards;
+}
+
+.menu-item.progress-item {
+	cursor: default;
+}
+
+.menu-item.progress-item:hover {
+	background-color: transparent;
+}

@@ -1,0 +1,157 @@
+html {
+	overflow-y: hidden;
+}
+
+.puzzle-game {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 60px);
+	background: white;
+}
+
+.game-header {
+	text-align: center;
+}
+
+.game-header h2 {
+	margin: 10px;
+	color: #000;
+	font-size: 18px;
+	margin-bottom: 8px;
+}
+
+.timer {
+	font-size: 32px;
+	color: #007aff;
+	font-weight: bold;
+}
+
+.puzzle-board {
+	width: 90%;
+	max-width: 500px;
+	aspect-ratio: 1;
+	margin: 10px auto;
+	background: #ebedf0;
+	border-radius: 24px;
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 2px;
+	padding: 2px;
+	align-self: center;
+	overflow: hidden;
+}
+
+.puzzle-cell {
+	aspect-ratio: 1;
+	background: #f5f5f5;
+	width: 100%;
+	height: 100%;
+}
+
+.carousel-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	margin-top: 5vh;
+	padding: 0 20px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.carousel-button {
+	width: 40px;
+	height: 100%; /* Теперь высота равна высоте карусели */
+	background: #ebedf0;
+	border: none;
+	border-radius: 12px;
+	font-size: 24px;
+	color: #8e8e93; /* Серый цвет как в профиле */
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1;
+}
+
+.carousel-button.left {
+	margin-right: 8px;
+}
+
+.carousel-button.right {
+	margin-left: 8px;
+}
+
+.pieces-carousel {
+	flex: 1;
+	background: #ebedf0;
+	border-radius: 24px;
+	padding: 12px 0;
+	overflow: hidden;
+}
+
+.pieces-container {
+	display: flex;
+	gap: 12px;
+	padding: 0 12px;
+	overflow-x: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	scroll-behavior: smooth;
+	width: 100%;
+	scroll-padding: 0 12px;
+}
+
+.pieces-container::-webkit-scrollbar {
+	display: none;
+}
+
+.puzzle-piece {
+	flex: 0 0 80px; /* Еще больше увеличиваем размер контейнера */
+	width: 80px;
+	height: 80px;
+	background: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px; /* Увеличиваем отступ */
+}
+
+.puzzle-piece img {
+	width: 72px; /* Увеличиваем размер кусочка */
+	height: 72px;
+	object-fit: contain;
+}
+
+.ready-button {
+	margin-top: 5vh;
+	margin-left: auto;
+	margin-right: auto;
+	width: 60%;
+	background: #007aff;
+	color: white;
+	border: none;
+	padding: 16px;
+	border-radius: 12px;
+	font-size: 16px;
+}
+
+@media (max-width: 750px) {
+	.carousel-button {
+		display: none;
+	}
+
+	.pieces-carousel {
+		margin: 0;
+	}
+
+	.carousel-wrapper {
+		padding: 0 10px; /* Уменьшаем отступы когда нет кнопок */
+	}
+}
+
+@media (max-width: 400px) {
+	.puzzle-board {
+		width: 320px;
+	}
+}

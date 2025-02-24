@@ -1,0 +1,50 @@
+.collected-puzzles-container {
+	padding: 20px;
+	color: #000;
+}
+
+.back-button-container {
+	margin-bottom: 20px;
+}
+
+.back-button {
+	background: #007aff;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	font-size: 14px;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	border-radius: 8px;
+	transition: background-color 0.2s ease;
+}
+
+.back-button:focus {
+	outline: none;
+}
+
+.back-button:active {
+	color: white;
+	background: #0062cc;
+}
+
+.back-button:hover {
+	color: white;
+	background: #0062cc;
+}
+
+.collected-puzzles-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 200px);
+}
+
+.collected-puzzles-content h2 {
+	margin-bottom: 20px;
+}
+
+.collected-puzzles-content p {
+	color: #8e8e93;
+}

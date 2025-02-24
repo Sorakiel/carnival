@@ -1,0 +1,64 @@
+.puzzle-list {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: calc(100vh - 120px); /* Учитываем высоту header и tabbar */
+	overflow-y: scroll;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE и Edge */
+}
+
+/* Скрываем скроллбар для Chrome, Safari и Opera */
+.puzzle-list::-webkit-scrollbar {
+	display: none;
+}
+
+.puzzle-item {
+	margin-bottom: 20px;
+	padding: 12px;
+	background: #f5f5f5;
+	display: flex;
+	align-items: center;
+	border-radius: 12px;
+	box-shadow: #8e8e93 1px 1px 10px;
+	width: 95%;
+	max-width: 800px;
+}
+
+.puzzle-info {
+	flex: 1;
+	padding-left: 12px;
+}
+
+.puzzle-info h3 {
+	margin: 0 0 8px 0;
+	font-size: 16px;
+	color: #000;
+}
+
+.puzzle-item img {
+	width: 64px;
+	height: 64px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.collect-button {
+	background: #007aff;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 8px;
+	font-size: 14px;
+}
+
+.collected-label {
+	color: #000;
+	margin-top: 8px;
+}
+
+.score {
+	color: #34c759;
+	margin-top: 4px;
+}
