@@ -12,7 +12,7 @@ function Auth() {
 				<input type='password' placeholder='Пароль' />
 				<button className='login-button'>Войти</button>
 				<button
-					className='register-button'
+					className='auth-button'
 					onClick={() => navigate('/registration')}
 				>
 					Регистрация

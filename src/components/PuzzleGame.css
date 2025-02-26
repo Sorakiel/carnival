@@ -33,19 +33,27 @@ html {
 	margin: 10px auto;
 	background: #ebedf0;
 	border-radius: 24px;
-	display: grid;
-	grid-template-columns: repeat(6, 1fr);
-	gap: 2px;
-	padding: 2px;
-	align-self: center;
+	position: relative;
 	overflow: hidden;
 }
 
 .puzzle-cell {
-	aspect-ratio: 1;
-	background: #f5f5f5;
-	width: 100%;
-	height: 100%;
+	position: absolute;
+	width: 16.666%; /* 100% / 6 */
+	height: 16.666%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	left: calc((100% / 6) * (var(--col, 0)));
+	top: calc((100% / 6) * (var(--row, 0)));
+}
+
+.puzzle-cell img {
+	position: absolute;
+	width: 120%;
+	height: 120%;
+	top: -10%;
+	left: -10%;
 }
 
 .carousel-wrapper {
@@ -106,7 +114,7 @@ html {
 }
 
 .puzzle-piece {
-	flex: 0 0 80px; /* Еще больше увеличиваем размер контейнера */
+	flex: 0 0 80px;
 	width: 80px;
 	height: 80px;
 	background: white;
@@ -114,7 +122,13 @@ html {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 8px; /* Увеличиваем отступ */
+	padding: 8px;
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.puzzle-piece:hover {
+	transform: scale(1.05);
 }
 
 .puzzle-piece img {
@@ -154,4 +168,34 @@ html {
 	.puzzle-board {
 		width: 320px;
 	}
+}
+
+/* Обновляем стили для выбранного кусочка */
+.puzzle-piece.selected {
+	transform: scale(0.9);
+	box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+	background: #e5e5ea;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* Стили для ячеек, когда кусочек выбран */
+.puzzle-cell.selectable {
+	cursor: pointer;
+}
+
+.puzzle-cell.selectable:hover {
+	background: rgba(229, 229, 234, 0.5);
+}
+
+/* Добавим стиль для ячеек с размещенными кусочками */
+.puzzle-cell:has(img) {
+	cursor: pointer;
+}
+
+.puzzle-cell:has(img):hover {
+	opacity: 0.8;
+}
+
+.puzzle-cell:has(img):active {
+	opacity: 0.6;
 }

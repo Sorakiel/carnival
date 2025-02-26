@@ -11,9 +11,9 @@ function Registration() {
 				<input type='text' placeholder='Имя фамилия' />
 				<input type='text' placeholder='Логин' />
 				<input type='password' placeholder='Пароль' />
-				<input type='text' placeholder='Группа' />
+				<input type='text' placeholder='Высшая школа' />
 				<button className='login-button'>Зарегистрироваться</button>
-				<button className='back-button' onClick={() => navigate('/')}>
+				<button className='auth-button' onClick={() => navigate('/')}>
 					Назад
 				</button>
 			</div>
