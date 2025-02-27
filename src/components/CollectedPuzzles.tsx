@@ -42,12 +42,9 @@ function CollectedPuzzles() {
 					<p>У вас пока нет собранных пазлов</p>
 				) : (
 					<div className='collected-puzzles-list'>
-						{puzzles.map((puzzle, index) => (
+						{puzzles.map(puzzle => (
 							<div key={puzzle.id} className='collected-puzzle-item'>
-								<img
-									src={`/assets/puzzles/puzzle_${index}.jpg`}
-									alt={puzzle.name}
-								/>
+								<img src={puzzle.image} alt={puzzle.name} />
 								<div className='puzzle-info'>
 									<h3>{puzzle.name}</h3>
 									<p className='score'>Счёт: {puzzle.score}/10</p>

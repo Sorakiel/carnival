@@ -13,7 +13,7 @@ function Profile() {
 	const [isExiting, setIsExiting] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState('')
-	const totalPuzzles = 12
+	const totalPuzzles = 11
 	const navigate = useNavigate()
 
 	useEffect(() => {

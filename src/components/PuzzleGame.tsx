@@ -12,20 +12,6 @@ function PuzzleGame() {
 	const [puzzleInfo, setPuzzleInfo] = useState<PuzzleInfo | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState('')
-	const puzzleNames = [
-		'Первый пазл',
-		'Второй пазл',
-		'Третий пазл',
-		'Четвертый пазл',
-		'Пятый пазл',
-		'Шестой пазл',
-		'Седьмой пазл',
-		'Восьмой пазл',
-		'Девятый пазл',
-		'Десятый пазл',
-		'Одиннадцатый пазл',
-		'Двенадцатый пазл',
-	]
 
 	const [placedPieces, setPlacedPieces] = useState<number[]>(Array(36).fill(-1))
 	const [availablePieces, setAvailablePieces] = useState<number[]>(
@@ -46,33 +32,19 @@ function PuzzleGame() {
 		const fetchPuzzleInfo = async () => {
 			try {
 				const puzzles = await getPuzzlesInfo()
-				console.log('Полученные пазлы:', puzzles)
 				const puzzle = puzzles.find(p => p.id === Number(id))
-				console.log('ID текущего пазла:', id)
-				console.log('Найденный пазл:', puzzle)
 				if (puzzle) {
 					setPuzzleInfo(puzzle)
-					// Добавляем проверку путей
-					const testPath = `/assets/pieces/puzzle_${puzzle.id}/piece (1).png`
-					console.log('Тестовый путь к кусочку:', testPath)
-					const img = new Image()
-					img.onload = () =>
-						console.log('Тестовое изображение загружено успешно')
-					img.onerror = () =>
-						console.error('Ошибка загрузки тестового изображения')
-					img.src = testPath
 				} else {
 					setError('Пазл не найден')
 				}
 			} catch (err) {
-				console.error('Ошибка при загрузке пазла:', err)
 				setError('Ошибка загрузки данных пазла')
 			} finally {
 				setIsLoading(false)
 			}
 		}
 
-		console.log('Начинаем загрузку пазла с ID:', id)
 		fetchPuzzleInfo()
 	}, [id])
 
@@ -94,7 +66,7 @@ function PuzzleGame() {
 		}
 	}, [])
 
-	// Добавляем функцию для предзагрузки изображений
+	// Предзагрузка изображений
 	useEffect(() => {
 		if (puzzleInfo) {
 			const preloadImages = async () => {
@@ -106,17 +78,16 @@ function PuzzleGame() {
 							resolve(true)
 						}
 						img.onerror = reject
-						img.src = `/assets/pieces/puzzle_${puzzleInfo.id}/piece (${
-							i + 1
-						}).png`
+						img.src = `/assets/pieces/puzzle_${
+							puzzleInfo.id - 1
+						}/piece (${i}).png`
 					})
 				})
 
 				try {
 					await Promise.allSettled(promises)
-					console.log('Все доступные изображения загружены')
 				} catch (error) {
-					console.error('Ошибка при загрузке изображений:', error)
+					// Обработка ошибок загрузки изображений внутри Promise
 				}
 			}
 
@@ -151,39 +122,39 @@ function PuzzleGame() {
 		}
 	}
 
-	// Обработчик выбора кусочка пазла
+	// Выбор кусочка пазла
 	const handlePieceSelect = (pieceIndex: number) => {
 		if (!availablePieces.includes(pieceIndex)) return
 		setSelectedPiece(pieceIndex)
 	}
 
-	// Обработчик размещения кусочка на поле
+	// Размещение кусочка на поле
 	const handleCellClick = (cellIndex: number) => {
 		if (selectedPiece === null || placedPieces[cellIndex] !== -1) return
 
-		// Размещаем выбранный кусочек на поле
+		// Размещение выбранного кусочка
 		setPlacedPieces(prev => {
 			const newPlacedPieces = [...prev]
 			newPlacedPieces[cellIndex] = selectedPiece
 			return newPlacedPieces
 		})
 
-		// Удаляем кусочек из доступных
+		// Удаление кусочка из доступных
 		setAvailablePieces(prev => prev.filter(p => p !== selectedPiece))
 
-		// Сбрасываем выбранный кусочек
+		// Сброс выбранного кусочка
 		setSelectedPiece(null)
 	}
 
-	// Добавим обработчик возврата кусочка
+	// Возврат кусочка
 	const handlePieceReturn = (cellIndex: number) => {
 		const piece = placedPieces[cellIndex]
 		if (piece === -1) return
 
-		// Возвращаем кусочек в доступные
+		// Возврат кусочка в доступные
 		setAvailablePieces(prev => [...prev, piece])
 
-		// Удаляем кусочек с поля
+		// Удаление кусочка с поля
 		setPlacedPieces(prev => {
 			const newPlacedPieces = [...prev]
 			newPlacedPieces[cellIndex] = -1
@@ -196,17 +167,16 @@ function PuzzleGame() {
 		return !placedPieces.includes(-1)
 	}
 
-	// Функция проверки правильности сборки
+	// Проверка правильности сборки
 	const checkPuzzle = () => {
-		// В данном примере считаем, что индекс кусочка соответствует его правильной позиции
 		return placedPieces.every((piece, index) => piece === index)
 	}
 
-	// Вычисление счета на основе оставшегося времени
+	// Вычисление счета
 	const calculateScore = (timeLeft: number) => {
 		const maxTime = 120 // Максимальное время в секундах
 		const score = Math.round((timeLeft / maxTime) * 10)
-		return Math.min(10, Math.max(0, score)) // Ограничиваем счет от 0 до 10
+		return Math.min(10, Math.max(0, score)) // Ограничение счета от 0 до 10
 	}
 
 	// Обработка окончания игры
@@ -215,7 +185,7 @@ function PuzzleGame() {
 		const timeSpent = 120 - timeLeft
 		const finalScore = success ? calculateScore(timeLeft) : 0
 
-		// Останавливаем таймер при успешной сборке
+		// Остановка таймера при успешной сборке
 		if (success && timer) {
 			clearInterval(timer)
 		}
@@ -256,7 +226,7 @@ function PuzzleGame() {
 		}
 	}
 
-	// Обработчики для двойного нажатия
+	// Обработка двойного нажатия
 	const handleTouchStart = (cellIndex: number) => {
 		if (placedPieces[cellIndex] === -1) return
 
@@ -264,7 +234,7 @@ function PuzzleGame() {
 		const tapInterval = currentTime - lastTapTime
 
 		if (tapInterval < 300 && lastTapIndex === cellIndex) {
-			// Двойное нажатие в течение 300мс
+			// Возврат кусочка по двойному нажатию
 			handlePieceReturn(cellIndex)
 		}
 
@@ -272,9 +242,7 @@ function PuzzleGame() {
 		setLastTapIndex(cellIndex)
 	}
 
-	const handleTouchEnd = () => {
-		// Оставляем пустым, так как нам больше не нужно очищать таймер
-	}
+	const handleTouchEnd = () => {}
 
 	if (isLoading) {
 		return <div className='puzzle-game'>Загрузка...</div>
@@ -292,7 +260,7 @@ function PuzzleGame() {
 				</button>
 			</div>
 			<div className='game-header'>
-				<h2>{puzzleNames[Number(id) - 1]}</h2>
+				<h2>{puzzleInfo.name}</h2>
 				<div className='timer'>{formatTime(timeLeft)}</div>
 			</div>
 

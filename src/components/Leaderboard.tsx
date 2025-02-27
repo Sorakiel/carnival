@@ -14,7 +14,7 @@ function Leaderboard() {
 		const fetchLeaderboard = async () => {
 			try {
 				const data = await getLeaderboard()
-				// Проверяем, что data является массивом
+				// Проверка формата данных
 				if (!Array.isArray(data)) {
 					console.error('Данные лидерборда не являются массивом:', data)
 					setError('Неверный формат данных лидерборда')

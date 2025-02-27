@@ -9,31 +9,12 @@ function PuzzleList() {
 	const [isLoading, setIsLoading] = useState(true)
 	const [error, setError] = useState('')
 	const navigate = useNavigate()
-	const puzzleNames = [
-		'Первый пазл',
-		'Второй пазл',
-		'Третий пазл',
-		'Четвертый пазл',
-		'Пятый пазл',
-		'Шестой пазл',
-		'Седьмой пазл',
-		'Восьмой пазл',
-		'Девятый пазл',
-		'Десятый пазл',
-		'Одиннадцатый пазл',
-		'Двенадцатый пазл',
-	]
 
 	useEffect(() => {
 		const fetchPuzzles = async () => {
 			try {
 				const data = await getPuzzlesInfo()
-				// Добавляем названия к данным с сервера
-				const puzzlesWithNames = data.map((puzzle, index) => ({
-					...puzzle,
-					name: puzzleNames[index] || puzzle.name,
-				}))
-				setPuzzles(puzzlesWithNames)
+				setPuzzles(data)
 			} catch (err) {
 				setError('Не удалось загрузить список пазлов')
 			} finally {
@@ -62,9 +43,9 @@ function PuzzleList() {
 
 	return (
 		<div className='puzzle-list'>
-			{puzzles.map((puzzle, index) => (
+			{puzzles.map(puzzle => (
 				<div key={puzzle.id} className='puzzle-item'>
-					<img src={`/assets/puzzles/puzzle_${index}.jpg`} alt={puzzle.name} />
+					<img src={puzzle.image} alt={puzzle.name} />
 					<div className='puzzle-info'>
 						<h3>{puzzle.name}</h3>
 						{puzzle.assembled ? (
@@ -75,7 +56,7 @@ function PuzzleList() {
 						) : (
 							<button
 								className='collect-button'
-								onClick={() => navigate(`/puzzle/${index + 1}`)}
+								onClick={() => navigate(`/puzzle/${puzzle.id}`)}
 							>
 								Собрать
 							</button>
