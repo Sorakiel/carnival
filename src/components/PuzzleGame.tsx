@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { getPuzzlesInfo, savePuzzleProgress } from '../api/api'
+import { PuzzleInfo } from '../api/types'
 import Modal from './Modal'
 import './PuzzleGame.css'
 
@@ -7,7 +9,10 @@ function PuzzleGame() {
 	const { id } = useParams()
 	const navigate = useNavigate()
 	const [timeLeft, setTimeLeft] = useState(120) // 2 минуты в секундах
-	const puzzleNames: string[] = [
+	const [puzzleInfo, setPuzzleInfo] = useState<PuzzleInfo | null>(null)
+	const [isLoading, setIsLoading] = useState(true)
+	const [error, setError] = useState('')
+	const puzzleNames = [
 		'Первый пазл',
 		'Второй пазл',
 		'Третий пазл',
@@ -22,7 +27,6 @@ function PuzzleGame() {
 		'Двенадцатый пазл',
 	]
 
-	const [visiblePieces, setVisiblePieces] = useState(10)
 	const [placedPieces, setPlacedPieces] = useState<number[]>(Array(36).fill(-1))
 	const [availablePieces, setAvailablePieces] = useState<number[]>(
 		Array.from({ length: 36 }, (_, i) => i)
@@ -32,34 +36,93 @@ function PuzzleGame() {
 	const [isSuccess, setIsSuccess] = useState(false)
 	const [timeSpent, setTimeSpent] = useState(0)
 	const [score, setScore] = useState(0)
+	const [isSaving, setIsSaving] = useState(false)
+	const [loadedPieces, setLoadedPieces] = useState<Set<number>>(new Set())
+	const [lastTapTime, setLastTapTime] = useState<number>(0)
+	const [lastTapIndex, setLastTapIndex] = useState<number | null>(null)
+	const [timer, setTimer] = useState<number | null>(null)
 
 	useEffect(() => {
-		const timer = setInterval(() => {
+		const fetchPuzzleInfo = async () => {
+			try {
+				const puzzles = await getPuzzlesInfo()
+				console.log('Полученные пазлы:', puzzles)
+				const puzzle = puzzles.find(p => p.id === Number(id))
+				console.log('ID текущего пазла:', id)
+				console.log('Найденный пазл:', puzzle)
+				if (puzzle) {
+					setPuzzleInfo(puzzle)
+					// Добавляем проверку путей
+					const testPath = `/assets/pieces/puzzle_${puzzle.id}/piece (1).png`
+					console.log('Тестовый путь к кусочку:', testPath)
+					const img = new Image()
+					img.onload = () =>
+						console.log('Тестовое изображение загружено успешно')
+					img.onerror = () =>
+						console.error('Ошибка загрузки тестового изображения')
+					img.src = testPath
+				} else {
+					setError('Пазл не найден')
+				}
+			} catch (err) {
+				console.error('Ошибка при загрузке пазла:', err)
+				setError('Ошибка загрузки данных пазла')
+			} finally {
+				setIsLoading(false)
+			}
+		}
+
+		console.log('Начинаем загрузку пазла с ID:', id)
+		fetchPuzzleInfo()
+	}, [id])
+
+	useEffect(() => {
+		const newTimer = setInterval(() => {
 			setTimeLeft(prev => {
 				if (prev <= 1) {
-					clearInterval(timer)
+					clearInterval(newTimer)
 					handleGameOver(false)
 				}
 				return prev > 0 ? prev - 1 : 0
 			})
 		}, 1000)
 
-		return () => clearInterval(timer)
-	}, [])
+		setTimer(newTimer)
 
-	useEffect(() => {
-		const updateVisiblePieces = () => {
-			const containerWidth =
-				document.querySelector('.pieces-carousel')?.clientWidth || 0
-			const pieceWidth = 76 // 64px + 12px gap
-			const maxPieces = Math.floor(containerWidth / pieceWidth)
-			setVisiblePieces(Math.min(8, maxPieces))
+		return () => {
+			if (newTimer) clearInterval(newTimer)
 		}
-
-		updateVisiblePieces()
-		window.addEventListener('resize', updateVisiblePieces)
-		return () => window.removeEventListener('resize', updateVisiblePieces)
 	}, [])
+
+	// Добавляем функцию для предзагрузки изображений
+	useEffect(() => {
+		if (puzzleInfo) {
+			const preloadImages = async () => {
+				const promises = Array.from({ length: 36 }, (_, i) => {
+					return new Promise((resolve, reject) => {
+						const img = new Image()
+						img.onload = () => {
+							setLoadedPieces(prev => new Set([...prev, i]))
+							resolve(true)
+						}
+						img.onerror = reject
+						img.src = `/assets/pieces/puzzle_${puzzleInfo.id}/piece (${
+							i + 1
+						}).png`
+					})
+				})
+
+				try {
+					await Promise.allSettled(promises)
+					console.log('Все доступные изображения загружены')
+				} catch (error) {
+					console.error('Ошибка при загрузке изображений:', error)
+				}
+			}
+
+			preloadImages()
+		}
+	}, [puzzleInfo])
 
 	const formatTime = (seconds: number) => {
 		const mins = Math.floor(seconds / 60)
@@ -147,20 +210,42 @@ function PuzzleGame() {
 	}
 
 	// Обработка окончания игры
-	const handleGameOver = (completed: boolean) => {
+	const handleGameOver = async (completed: boolean) => {
 		const success = completed && checkPuzzle()
-		const timeSpent = 120 - timeLeft // Вычисляем потраченное время
+		const timeSpent = 120 - timeLeft
 		const finalScore = success ? calculateScore(timeLeft) : 0
+
+		// Останавливаем таймер при успешной сборке
+		if (success && timer) {
+			clearInterval(timer)
+		}
 
 		setIsSuccess(success)
 		setTimeSpent(timeSpent)
 		setScore(finalScore)
 		setShowModal(true)
+
+		if (success && puzzleInfo) {
+			setIsSaving(true)
+			try {
+				await savePuzzleProgress({
+					puzzle_id: puzzleInfo.id,
+					score: finalScore,
+					time_spent: timeSpent,
+				})
+			} catch (error) {
+				console.error('Ошибка сохранения прогресса:', error)
+			} finally {
+				setIsSaving(false)
+			}
+		}
 	}
 
 	const handleModalClose = () => {
-		setShowModal(false)
-		navigate('/profile')
+		if (!isSaving) {
+			setShowModal(false)
+			navigate('/profile')
+		}
 	}
 
 	const handleReadyClick = () => {
@@ -171,10 +256,43 @@ function PuzzleGame() {
 		}
 	}
 
+	// Обработчики для двойного нажатия
+	const handleTouchStart = (cellIndex: number) => {
+		if (placedPieces[cellIndex] === -1) return
+
+		const currentTime = Date.now()
+		const tapInterval = currentTime - lastTapTime
+
+		if (tapInterval < 300 && lastTapIndex === cellIndex) {
+			// Двойное нажатие в течение 300мс
+			handlePieceReturn(cellIndex)
+		}
+
+		setLastTapTime(currentTime)
+		setLastTapIndex(cellIndex)
+	}
+
+	const handleTouchEnd = () => {
+		// Оставляем пустым, так как нам больше не нужно очищать таймер
+	}
+
+	if (isLoading) {
+		return <div className='puzzle-game'>Загрузка...</div>
+	}
+
+	if (error || !puzzleInfo) {
+		return <div className='puzzle-game'>{error || 'Пазл не найден'}</div>
+	}
+
 	return (
 		<div className='puzzle-game'>
+			<div className='back-button-container'>
+				<button className='back-button' onClick={() => navigate('/puzzles')}>
+					Назад
+				</button>
+			</div>
 			<div className='game-header'>
-				<h2>{puzzleNames[Number(id)]}</h2>
+				<h2>{puzzleNames[Number(id) - 1]}</h2>
 				<div className='timer'>{formatTime(timeLeft)}</div>
 			</div>
 
@@ -186,9 +304,12 @@ function PuzzleGame() {
 							selectedPiece !== null && placedPieces[i] === -1
 								? 'selectable'
 								: ''
-						}`}
+						} ${lastTapIndex === i ? 'touched' : ''}`}
 						onClick={() => handleCellClick(i)}
 						onDoubleClick={() => handlePieceReturn(i)}
+						onTouchStart={() => handleTouchStart(i)}
+						onTouchEnd={handleTouchEnd}
+						onTouchCancel={handleTouchEnd}
 						style={
 							{
 								'--row': Math.floor(i / 6),
@@ -196,9 +317,9 @@ function PuzzleGame() {
 							} as React.CSSProperties
 						}
 					>
-						{placedPieces[i] !== -1 && (
+						{placedPieces[i] !== -1 && loadedPieces.has(placedPieces[i]) && (
 							<img
-								src={`/src/assets/pieces/puzzle_${id}/piece (${
+								src={`/assets/pieces/puzzle_${puzzleInfo.id}/piece (${
 									placedPieces[i] + 1
 								}).png`}
 								alt={`Piece ${placedPieces[i] + 1}`}
@@ -227,10 +348,15 @@ function PuzzleGame() {
 								onClick={() => handlePieceSelect(i)}
 							>
 								<img
-									src={`/src/assets/pieces/puzzle_${id}/piece (${i + 1}).png`}
+									src={`/assets/pieces/puzzle_${puzzleInfo.id}/piece (${
+										i + 1
+									}).png`}
 									alt={`Piece ${i + 1}`}
 									style={{ width: '100%', height: '100%' }}
 									draggable={false}
+									onLoad={() => {
+										setLoadedPieces(prev => new Set([...prev, i]))
+									}}
 								/>
 							</div>
 						))}

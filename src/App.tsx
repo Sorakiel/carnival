@@ -4,6 +4,7 @@ import Auth from './components/Auth'
 import CollectedPuzzles from './components/CollectedPuzzles'
 import Header from './components/Header'
 import Leaderboard from './components/Leaderboard'
+import PrivateRoute from './components/PrivateRoute'
 import Profile from './components/Profile'
 import PuzzleGame from './components/PuzzleGame'
 import PuzzleList from './components/PuzzleList'
@@ -36,51 +37,61 @@ function App() {
 					<Route
 						path='/profile'
 						element={
-							<>
-								<Header />
-								<Profile />
-								<TabBar />
-							</>
+							<PrivateRoute>
+								<>
+									<Header />
+									<Profile />
+									<TabBar />
+								</>
+							</PrivateRoute>
 						}
 					/>
 					<Route
 						path='/puzzles'
 						element={
-							<>
-								<Header />
-								<PuzzleList />
-								<TabBar />
-							</>
+							<PrivateRoute>
+								<>
+									<Header />
+									<PuzzleList />
+									<TabBar />
+								</>
+							</PrivateRoute>
 						}
 					/>
 					<Route
 						path='/puzzle/:id'
 						element={
-							<>
-								<Header />
-								<PuzzleGame />
-								<TabBar />
-							</>
+							<PrivateRoute>
+								<>
+									<Header />
+									<PuzzleGame />
+									<TabBar />
+								</>
+							</PrivateRoute>
 						}
 					/>
 					<Route
 						path='/collected-puzzles'
 						element={
-							<>
-								<Header />
-								<CollectedPuzzles />
-								<TabBar />
-							</>
+							<PrivateRoute>
+								<>
+									<Header />
+									<CollectedPuzzles />
+									<TabBar />
+								</>
+							</PrivateRoute>
 						}
 					/>
 					<Route
 						path='/leaderboard'
 						element={
-							<>
-								<Header />
-								<Leaderboard />
-								<TabBar />
-							</>
+							<PrivateRoute>
+								<>
+									<Header />
+									<Leaderboard />
+									<TabBar />
+								</>
+							</PrivateRoute>
 						}
 					/>
 				</Routes>

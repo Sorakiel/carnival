@@ -46,6 +46,10 @@ html {
 	justify-content: center;
 	left: calc((100% / 6) * (var(--col, 0)));
 	top: calc((100% / 6) * (var(--row, 0)));
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
 }
 
 .puzzle-cell img {
@@ -125,6 +129,10 @@ html {
 	padding: 8px;
 	cursor: pointer;
 	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
 }
 
 .puzzle-piece:hover {
@@ -190,6 +198,7 @@ html {
 /* Добавим стиль для ячеек с размещенными кусочками */
 .puzzle-cell:has(img) {
 	cursor: pointer;
+	touch-action: none; /* Предотвращаем стандартные жесты браузера */
 }
 
 .puzzle-cell:has(img):hover {
@@ -198,4 +207,39 @@ html {
 
 .puzzle-cell:has(img):active {
 	opacity: 0.6;
+}
+
+.puzzle-cell.touched {
+	opacity: 0.6;
+	transition: opacity 0.3s ease;
+}
+
+.back-button-container {
+	margin-bottom: 20px;
+}
+
+.back-button {
+	background: #007aff;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	font-size: 14px;
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+	border-radius: 8px;
+	transition: background-color 0.2s ease;
+}
+
+.back-button:focus {
+	outline: none;
+}
+
+.back-button:active {
+	color: white;
+	background: #0062cc;
+}
+
+.back-button:hover {
+	color: white;
+	background: #0062cc;
 }

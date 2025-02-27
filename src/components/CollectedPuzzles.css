@@ -37,7 +37,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	min-height: calc(100vh - 200px);
 }
 
@@ -47,4 +47,49 @@
 
 .collected-puzzles-content p {
 	color: #8e8e93;
+}
+
+.error-message {
+	color: #ff3b30;
+	margin-top: 10px;
+}
+
+.collected-puzzles-list {
+	width: 100%;
+	max-width: 600px;
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.collected-puzzle-item {
+	display: flex;
+	align-items: center;
+	padding: 15px;
+	background: #f5f5f5;
+	border-radius: 10px;
+	box-shadow: #8e8e93 1px 1px 10px;
+}
+
+.collected-puzzle-item img {
+	width: 64px;
+	height: 64px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.puzzle-info {
+	margin-left: 15px;
+	flex: 1;
+}
+
+.puzzle-info h3 {
+	margin: 0 0 5px 0;
+	font-size: 16px;
+}
+
+.puzzle-info .score {
+	margin: 0;
+	color: #34c759;
+	font-weight: bold;
 }

@@ -1,18 +1,38 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import collectedIcon from '../assets/icons/collected.svg'
-import leaderboardIcon from '../assets/icons/leaderboard.svg'
-import progressbarIcon from '../assets/icons/progressbar.svg'
+import { getUserInfo, logout } from '../api/api'
+import { UserInfo } from '../api/types'
 import './Profile.css'
+import collectedIcon from '/assets/icons/collected.svg'
+import leaderboardIcon from '/assets/icons/leaderboard.svg'
+import progressbarIcon from '/assets/icons/progressbar.svg'
 
 function Profile() {
-	const [collectedCount] = useState(0)
+	const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isExiting, setIsExiting] = useState(false)
+	const [isLoading, setIsLoading] = useState(true)
+	const [error, setError] = useState('')
 	const totalPuzzles = 12
 	const navigate = useNavigate()
 
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const userData = await getUserInfo()
+				setUserInfo(userData)
+			} catch (err) {
+				setError('Не удалось загрузить данные')
+			} finally {
+				setIsLoading(false)
+			}
+		}
+
+		fetchData()
+	}, [])
+
 	const handleLogout = () => {
+		logout()
 		navigate('/')
 	}
 
@@ -28,12 +48,32 @@ function Profile() {
 		}
 	}
 
+	if (isLoading) {
+		return (
+			<div className='profile-container'>
+				<p>Загрузка...</p>
+			</div>
+		)
+	}
+
+	if (error) {
+		return (
+			<div className='profile-container'>
+				<p className='error-message'>{error}</p>
+			</div>
+		)
+	}
+
 	return (
 		<div className='profile-container'>
 			<div className='profile-header'>
 				<div className='name-container'>
 					<div className='name-row'>
-						<h2>Имя Фамилия</h2>
+						<h2>
+							{userInfo
+								? `${userInfo.first_name} ${userInfo.last_name}`
+								: 'Загрузка...'}
+						</h2>
 						<div className='dropdown-container'>
 							<button
 								className={`dropdown-button ${isMenuOpen ? 'active' : ''}`}
@@ -84,11 +124,15 @@ function Profile() {
 						<div className='progress-bar'>
 							<div
 								className='progress-fill'
-								style={{ width: `${(collectedCount / totalPuzzles) * 100}%` }}
+								style={{
+									width: `${
+										((userInfo?.collected_puzzles || 0) / totalPuzzles) * 100
+									}%`,
+								}}
 							/>
 						</div>
 						<span className='progress-count'>
-							{collectedCount}/{totalPuzzles}
+							{userInfo?.collected_puzzles || 0}/{totalPuzzles}
 						</span>
 					</div>
 				</div>

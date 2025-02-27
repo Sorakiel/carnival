@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import profileIcon from '../assets/icons/profile.svg'
-import puzzlesIcon from '../assets/icons/puzzles.svg'
 import './TabBar.css'
+import profileIcon from '/assets/icons/profile.svg'
+import puzzlesIcon from '/assets/icons/puzzles.svg'
 
 function TabBar() {
 	const navigate = useNavigate()
